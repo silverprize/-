@@ -5,8 +5,30 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Document</title>
+  <script src="hangul.js"></script>
 </head>
-<body>
+<body style="text-align: center;">
   <h1>팜프어 번역기</h1>
+  <div><textarea type="text" id="source" autofocus>왈패님 확인해주세요.</textarea></div>
+  <button type="button" id="submit">변환</button>
+  <div id="result" style="border: 1px solid #ccc; padding: 10px;"></div>
 </body>
+<script>
+  document.querySelector('#submit').addEventListener('click', function () {
+    var source = document.querySelector('#source').value;
+    var translated = [].reduce.call(source, function (accum, char) {
+      var tokens = Hangul.disassemble(char);
+      if (tokens.length === 4 && Hangul.isVowel(tokens[1]) && Hangul.isVowel(tokens[2])) {
+        var tmp = tokens[2];
+        tokens[2] = tokens[3];
+        tokens[3] = tmp;
+        accum.push(Hangul.assemble(tokens));
+      } else {
+        accum.push(char);
+      }
+      return accum;
+    }, []);
+    document.querySelector('#result').textContent = translated.join('');
+  });
+</script>
 </html>
